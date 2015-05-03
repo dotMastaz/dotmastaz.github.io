@@ -16,13 +16,12 @@
 <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./service-worker.js', {scope: './'}).then(function(registration) {
-            window.querySelector('#service-worker-registration').textContent = '✓ Success';
+            document.querySelector('#service-worker-registration').textContent = '✓ Success';
         }).catch(function(error) {
-            window.querySelector('#service-worker-registration').textContent = '✘ Error:' + error;
+            document.querySelector('#service-worker-registration').textContent = '✘ Error:' + error;
         });
     } else {
-
-        window.querySelector('#service-worker-registration').textContent = '✘ Unavailable!'
+        document.querySelector('#service-worker-registration').textContent = '✘ Unavailable!'
     }
 </script>
 </body>
