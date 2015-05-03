@@ -2,26 +2,44 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My Magical Offline Issues</title>
+    <title>dotMastaz Service Workers</title>
+
+    <script>
+        // Service workers require HTTPS (http://goo.gl/lq4gCo). If we're running on a real web server
+        // (as opposed to localhost on a custom port, which is whitelisted), then change the protocol to HTTPS.
+        if ((!location.port || location.port == "80") && location.protocol != 'https:') {
+            location.protocol = 'https:';
+        }
+    </script>
+
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-<h1>My Magical Offline Issue Tracker</h1>
-<div>
-    <ul id="issues"></ul>
+<div class="output">
+    <p>service worker registration: <strong id="status"></strong></p>
 </div>
-<div id="service-worker-log">
-    <p>Registration: <strong id="service-worker-registration"></strong></p>
-</div>
+
 <script>
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js', {scope: './'}).then(function(registration) {
-            document.querySelector('#service-worker-registration').textContent = '✓ Success';
+        // Override the default scope of '/' with './', so that the registration applies
+        // to the current directory and everything underneath it.
+        navigator.serviceWorker.register('service-worker.js', {scope: './'}).then(function(registration) {
+            // At this point, registration has taken place.
+            // The service worker will not handle requests until this page and any
+            // other instances of this page (in other tabs, etc.) have been
+            // closed/reloaded.
+            document.querySelector('#status').textContent = 'succeeded';
         }).catch(function(error) {
-            document.querySelector('#service-worker-registration').textContent = '✘ Error:' + error;
+            // Something went wrong during registration. The service-worker.js file
+            // might be unavailable or contain a syntax error.
+            document.querySelector('#status').textContent = error;
         });
     } else {
-        document.querySelector('#service-worker-registration').textContent = '✘ Unavailable!'
+        // The current browser doesn't support service workers.
+        var aElement = document.createElement('a');
+        aElement.href = 'http://www.chromium.org/blink/serviceworker/service-worker-faq';
+        aElement.textContent = 'unavailable';
+        document.querySelector('#status').appendChild(aElement);
     }
 </script>
 </body>
